@@ -1,0 +1,60 @@
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
+ <div class="row divider green">
+       <div class="col-md-12"></div>
+ </div>
+ <div class="row banner menu">
+       <div class="col-md-11 col-md-offset-1 padding-none">
+             <h1>Catalog App</h1>
+       </div>
+ </div>
+
+
+
+<html>
+<head>
+<style>
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+tr:nth-child(even) {
+    background-color: #dddddd;
+}
+</style>
+</head>
+<body>
+<table>
+  <tr>
+    <th>Category</th>
+                      <a href="{{url_for('newItem')}}">Add Item</a>
+
+    <th>Latest Items</th>
+  </tr>
+  <tr>
+      <td>
+        {% for categories in catalog %}
+            {{categories.name}}</br></br>
+        {% endfor %}
+      </td>
+      <td>
+        {% for item in items %}
+          {{item.title +'('+item.category+')'}}</br></br>
+        {% endfor %}
+      </td>
+  </tr>
+</table>
+
+</body>
+</html>
+
+{% endblock %}
