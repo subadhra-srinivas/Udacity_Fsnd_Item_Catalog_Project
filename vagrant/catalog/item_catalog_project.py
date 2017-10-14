@@ -342,8 +342,7 @@ def editItem(id):
     print login_session['user_id']
     print editedItem.user_id
     if login_session['user_id'] != editedItem.user_id:
-         return "<script>function myFunction() {alert('You are not authorized to edit items to 
-                 this catalog. Please create your own category in order to edit items.');}</script><body onload='myFunction()''>"
+         return "<script>function myFunction() {alert('You are not authorized to edit items to this catalog. Please create your own category in order to edit items.');}</script><body onload='myFunction()''>"
     if request.method == 'POST':
        if request.form['title']:
           editedItem.title = request.form['title']
@@ -368,8 +367,7 @@ def deleteItem(id):
         return redirect('/login')
     itemToDelete = session.query(Item).filter_by(id=id).one()
     if login_session['user_id'] != itemToDelete.user_id:
-       return "<script>function myFunction() {alert('You are not authorized to delete 
-               items to this catalog. Please create your own catalog in order to delete items.');}</script><body onload='myFunction()''    >"
+       return "<script>function myFunction() {alert('You are not authorized to delete items to this catalog. Please create your own catalog in order to delete items.');}</script><body onload='myFunction()''>"
     if request.method == 'POST':
        session.delete(itemToDelete)
        session.commit()
