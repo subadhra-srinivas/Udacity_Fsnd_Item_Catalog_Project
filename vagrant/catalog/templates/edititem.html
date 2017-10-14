@@ -27,8 +27,13 @@
 
                                         <label for="category">Category:</label>
                                         <select class="form-control" name="category">
+                                              
                                                 {% for category in categories %}
-                                                    <option value="{{category.name}}">{{category.name}}</option>
+                                                    {% if category == item.category %}
+                                                   	<option value="{{category.name}}" selected>{{category.name}}</option>                                    
+                                                    {%else %}         
+                                                        <option value="{{category.name}}">{{category.name}}</option>
+                                                    {% endif %}
                                                 {% endfor %}
                                         </select>
 
