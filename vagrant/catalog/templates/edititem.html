@@ -30,7 +30,7 @@
                                               
                                                 {% for category in categories %}
                                                     {% if category == item.category %}
-                                                   	<option value="{{category.name}}" selected>{{category.name}}</option>                                    
+                                                   	<option value="{{item.category}}" selected>{{item.category}}</option>                                    
                                                     {%else %}         
                                                         <option value="{{category.name}}">{{category.name}}</option>
                                                     {% endif %}
