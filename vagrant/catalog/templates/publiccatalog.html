@@ -16,8 +16,9 @@
                 </div>
         </div>
 
+
 <div class = 'flash'>
-                      {% with messages = get_flashed_messages() %}
+   {% with messages = get_flashed_messages() %}
       {% if messages %}
 
         <ul>
@@ -30,48 +31,31 @@
 
 </div>
 
-<!DOCTYPE html>
-<html>
-<head>
-<style>
-table {
-    font-family: arial, sans-serif;
-    border-collapse: collapse;
-    width: 100%;
-}
+<!-- Main Code -->
+             <div class = "row">
+                 <div class="col-md-6">
+                     <h3> Category </h3>
+                 </div>
+                 <div class="col-md-6">
+                     <h3>Latest Items</h3>
+                 </div>
+             </div>
+             <div class = "row divider blue_thin">
+                 <div class="col-md-12">
+                 </div>
+             </div>
+             <div class = "row">
+                 <div class="col-md-6">
+                      {% for categories in catalog %}
+                           {{categories.name}}</br></br>
+                      {% endfor %}
+                 </div>
+                 <div class="col-md-6">
+                      {% for item in items %}
+                           {{item.title +'('+item.category+')'}}</br></br>
+                      {% endfor %}
+                 </div>
+             </div>
 
-td, th {
-    border: 1px solid #dddddd;
-    text-align: left;
-    padding: 8px;
-}
-
-tr:nth-child(even) {
-    background-color: #dddddd;
-}
-</style>
-</head>
-<body>
-<table>
-  <tr>
-    <th>Category</th>
-    <th>Latest Items</th>
-  </tr>
-  <tr>
-      <td>
-        {% for categories in catalog %}
-            {{categories.name}}</br></br>
-        {% endfor %}
-      </td>
-      <td>
-        {% for item in items %}
-          {{item.title +'('+item.category+')'}}</br></br>
-        {% endfor %}
-      </td>
-  </tr>
-</table>
-
-</body>
-</html>
 
 {% endblock %}
