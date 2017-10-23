@@ -277,11 +277,13 @@ def ItemCategoryJSON(category_id):
         category_id=category_id).all()
     return jsonify(Items=[i.serialize for i in items])
 
+# JSON API's to view particular item for the category id specified
 @app.route('/catalog/<int:category_id>/item/<int:id>/JSON')
 def ItemJSON(category_id, id):
     item = session.query(Item).filter_by(id=id,category_id=category_id).one()
     return jsonify(Item=item.serialize)
 
+# JSON API's to view the catalog information
 @app.route('/catalog/JSON')
 def CatalogJSON():
     catalog = session.query(Categories).all()
@@ -298,6 +300,7 @@ def showCatalog():
     else:
         return render_template('catalog.html', catalog=catalog, items=items)
 
+# Show the items for the particular category
 @app.route('/catalog/<int:category_id>/items')
 def showCatagoryItem(category_id):
     category = session.query(Categories).filter_by(id = category_id).one()
@@ -334,6 +337,7 @@ def newItem():
     else:
        return render_template('newitem.html', categories=categories)
 
+# Edit a item
 @app.route('/catalog/item/<int:id>/edit', methods=['GET', 'POST'])
 def editItem(id):
     if 'username' not in login_session:
@@ -353,7 +357,9 @@ def editItem(id):
           editedItem.price = request.form['price']
        if request.form['category']:
           editedItem.category = request.form['category']
-           
+          category1 = session.query(Categories).filter_by(name = editedItem.category).one()
+          editedItem.category_id = category1.id
+
        session.add(editedItem)
        session.commit()
        flash('Item Successfully Edited')
