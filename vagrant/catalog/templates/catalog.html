@@ -9,52 +9,54 @@
              <h1>Catalog App</h1>
        </div>
  </div>
+<div class = 'flash'>
+   {% with messages = get_flashed_messages() %}
+      {% if messages %}
 
-
-
-<html>
-<head>
-<style>
-table {
-    font-family: arial, sans-serif;
-    border-collapse: collapse;
-    width: 100%;
-}
-
-td, th {
-    border: 1px solid #dddddd;
-    text-align: left;
-    padding: 8px;
-}
-
-tr:nth-child(even) {
-    background-color: #dddddd;
-}
-</style>
-</head>
-<body>
-<table>
-  <tr>
-    <th>Category</th>
-                      <a href="{{url_for('newItem')}}">Add Item</a>
-
-    <th>Latest Items</th>
-  </tr>
-  <tr>
-      <td>
-        {% for categories in catalog %}
-            {{categories.name}}</br></br>
+        <ul>
+        {% for message in messages %}
+            <li> <strong> {{ message }} </strong> </li>
         {% endfor %}
-      </td>
-      <td>
-        {% for item in items %}
-          {{item.title +'('+item.category+')'}}</br></br>
-        {% endfor %}
-      </td>
-  </tr>
-</table>
+        </ul>
+        {% endif %}
+    {% endwith %}
 
-</body>
-</html>
+</div>
+
+<a href='{{url_for('newItem')}}'>Add Item</a> 
+<!-- Main Code -->
+              <div class = "row">
+                  <div class="col-md-6">
+                      <h3> Category </h3>
+                  </div>
+                  <div class="col-md-6">
+                      <h3>Latest Items</h3>
+                  </div>
+              </div>
+              <div class = "row divider green_thin">
+                  <div class="col-md-12">
+                  </div>
+              </div>
+              <div class = "row">
+                  <div class="col-md-6">
+                       {% for categories in catalog %}
+                            {{categories.name}}</br></br>
+                       {% endfor %}
+                  </div>
+                  <div class="col-md-6">
+                        {% for item in items %}
+                            {% if session.user_id == item.user_id %}
+                                  {{item.title +'('+item.category+')'}}
+                                    <a href='{{url_for('editItem', id=item.id ) }}'>Edit</a> |
+                                    <a href='{{url_for('deleteItem', id=item.id ) }}'>Delete</a></br></br>
+
+                            {% else %}
+                                  {{item.title +'('+item.category+')'}}
+                                  <br><br>
+                            {% endif %}     
+
+                        {% endfor %}
+                  </div>
+              </div>
 
 {% endblock %}
