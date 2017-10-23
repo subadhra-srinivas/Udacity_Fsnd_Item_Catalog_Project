@@ -1,47 +1,62 @@
-<!DOCTYPE html>
-<html>
-<head>
-<style>
-table {
-    font-family: arial, sans-serif;
-    border-collapse: collapse;
-    width: 100%;
-}
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
+        <div class="row top-menu">
+                <div class="col-md-10"></div>
+                <div class="col-md-2 text-right">
+                                        </div>
+        </div>
+        <div class="row divider green">
+                <div class="col-md-12"></div>
+        </div>
+        <div class="row banner menu">
+                <div class="col-md-1"></div>
+                <div class="col-md-11 padding-none">
+                        <h1>Catalog App</h1>
+                </div>
+        </div>
 
-td, th {
-    border: 1px solid #dddddd;
-    text-align: left;
-    padding: 8px;
-}
 
-tr:nth-child(even) {
-    background-color: #dddddd;
-}
-</style>
-</head>
-<body>
-<h1> Catalog App </h1>
-<table>
-  <tr>
-    <th>Category</th>
-    {% for item in items %}
-       {% set item_category = item.category %}
-    {% endfor %}
-    <th>{{item_category}} Items( {{count_items}} items )</th>
-  </tr>
-  <tr>
-      <td>
-        {% for categories in catalog %}
-            {{categories.name}}</br></br>
+<div class = 'flash'>
+   {% with messages = get_flashed_messages() %}
+      {% if messages %}
+
+        <ul>
+        {% for message in messages %}
+            <li> <strong> {{ message }} </strong> </li>
         {% endfor %}
-      </td>
-      <td>
-        {% for item in items %}
-          {{item.title}}</br></br>
-        {% endfor %}
-      </td>
-  </tr>
-</table>
+        </ul>
+        {% endif %}
+    {% endwith %}
 
-</body>
-</html>
+</div>
+
+<!-- Main Code -->
+             <div class = "row">
+                 <div class="col-md-6">
+                     <h3> Category </h3>
+                 </div>
+                 <div class="col-md-6">
+                     <h3>{{category_name}} Items( {{count_items}} items )<h3>
+                 </div>
+             </div>
+             <div class = "row divider green_thin">
+                 <div class="col-md-12">
+                 </div>
+             </div>
+             <div class = "row">
+                 <div class="col-md-6">
+                      {% for categories in catalog %}
+                           {{categories.name}}</br></br>
+                      {% endfor %}
+                 </div>
+                 <div class="col-md-6">
+                      {% for item in items %}
+                           {{item.title}}</br></br>
+                      {% endfor %}
+                 </div>
+             </div>
+
+
+{% endblock %}
+
