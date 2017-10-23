@@ -1,31 +1,50 @@
-<!DOCTYPE html>
-<html>
-<head>
-<style>
-table {
-    font-family: arial, sans-serif;
-    border-collapse: collapse;
-    width: 100%;
-}
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
+        <div class="row top-menu">
+                <div class="col-md-10"></div>
+                <div class="col-md-2 text-right">
+                                        </div>
+        </div>
+        <div class="row divider green">
+                <div class="col-md-12"></div>
+        </div>
+        <div class="row banner menu">
+                <div class="col-md-1"></div>
+                <div class="col-md-11 padding-none">
+                        <h1>Catalog App</h1>
+                </div>
+        </div>
 
-td, th {
-    border: 1px solid #dddddd;
-    text-align: left;
-    padding: 8px;
-}
 
-tr:nth-child(even) {
-    background-color: #dddddd;
-}
-</style>
-</head>
-<body>
-<h1> Catalog App </h1>
-<h3> {{ item.category}}</h3>  
-    {{item.description}}</br></br>
+<div class = 'flash'>
+   {% with messages = get_flashed_messages() %}
+      {% if messages %}
 
-<a href='{{url_for('editItem', id=item.id ) }}'>Edit</a> |
-<a href='{{url_for('deleteItem', id=item.id ) }}'>Delete</a>
+        <ul>
+        {% for message in messages %}
+            <li> <strong> {{ message }} </strong> </li>
+        {% endfor %}
+        </ul>
+        {% endif %}
+    {% endwith %}
 
-</body>
-</html>
+</div>
+
+       <div class = "row">
+            <div class="col-md-12">
+              <h3> {{ item.title }}</h3>
+                  <p>Description:{{item.description}}</p>
+                      <a href='{{url_for('editItem', id=item.id ) }}'>Edit</a> |
+                      <a href='{{url_for('deleteItem', id=item.id ) }}'>Delete</a>
+             </div>
+       </div>
+       <div class = "row divider green_thin">
+       </div>
+
+{% endblock %}
+
+
+
+
+
