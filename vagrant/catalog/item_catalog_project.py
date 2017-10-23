@@ -270,16 +270,16 @@ def gdisconnect():
 
 
 # JSON APIs to view Catalog Information
-@app.route('/catalog/<string:category>/items/JSON')
-def ItemCatalogJSON(category):
+@app.route('/catalog/<int:category_id>/items/JSON')
+def ItemCategoryJSON(category_id):
     #categories = session.query(Categories).filter_by(category=category).one()
     items = session.query(Item).filter_by(
-        category=category).all()
+        category_id=category_id).all()
     return jsonify(Items=[i.serialize for i in items])
 
-@app.route('/catalog/<string:category>/item/<int:id>/JSON')
-def ItemJSON(category, id):
-    item = session.query(Item).filter_by(title=title,category=category).one()
+@app.route('/catalog/<int:category_id>/item/<int:id>/JSON')
+def ItemJSON(category_id, id):
+    item = session.query(Item).filter_by(id=id,category_id=category_id).one()
     return jsonify(Item=item.serialize)
 
 @app.route('/catalog/JSON')
@@ -305,13 +305,13 @@ def showCatagoryItem(category_id):
     items = session.query(Item).filter_by(category_id=category_id)
     count_items = session.query(Item).filter_by(category_id=category_id).count()
     if 'username' not in login_session:
-        return render_template('publicshowCategoryItem.html', catalog=catalog, items=items, category=category, count_items=count_items)
+        return render_template('publicshowCategoryItem.html', catalog=catalog, items=items, category_name=category.name, count_items=count_items)
     else:
         return render_template('showCategoryItem.html', catalog=catalog, items=items, category_name=category.name, count_items=count_items)
 
 @app.route('/catalog/<int:category_id>/item/<int:id>')
 def showItem(category_id,id):
-    item = session.query(Item).filter_by(category_id=category_id,id=id).one()
+    item = session.query(Item).filter_by(id=id,category_id=category_id).one()
     creator = getUserInfo(item.user_id)
     if 'username' not in login_session or creator.id != login_session['user_id']:
         return render_template('publicitem.html', item=item, creator=creator)
@@ -372,7 +372,7 @@ def deleteItem(id):
     if request.method == 'POST':
        session.delete(itemToDelete)
        session.commit()
-       flash('Menu Item Successfully Deleted')
+       flash('Item Successfully Deleted')
        return redirect(url_for('showCatalog'))
     else:
        return render_template('deleteItem.html', item=itemToDelete)
