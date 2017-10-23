@@ -27,16 +27,16 @@
 
                                         <label for="category">Category:</label>
                                         <select class="form-control" name="category">
-                                              
-                                                {% for category in categories %}
-                                                    {{category.id}}
+                                        	 {% for category1 in categories %}
+                                                    {{category1.id}}
                                                     {{item.category_id}}
-                                                    {% if category.id  == item.category_id %}
-                                                   	<option value="{{item.category}}" selected>{{item.category}}</option>                                    
+                                                    {% if category1.id  == item.category_id %}
+                                                   	<option value="{{category1.name}}" selected>{{category1.name}}</option>                                    
                                                     {% else %}         
-                                                        <option value="{{category.name}}">{{category.name}}</option>
+                                                        <option value="{{category1.name}}">{{category1.name}}</option>
                                                     {% endif %}
                                                 {% endfor %}
+
                                         </select>
 
 					<button type="submit" class="btn btn-default" id="submit" type="submit">
@@ -50,3 +50,5 @@
 		</div>
 	</div>
 {% endblock %}
+
+
