@@ -6,7 +6,7 @@
 h1 {
 	font-family: "Helvetica Neue Light", Roboto, Helvetica, Arial, sans-serif;
 	font-size: 50px;
-	color: #51453B;
+	color: #FFFFFF;
 	line-height: 60px;
 	font-weight: 300;
 }
@@ -95,12 +95,20 @@ h3 {
 .divider.blue {
 	background-color: #42C3C9;
 }
+.divider.blue_thin {
+	background-color: #42C3C9;
+	height: 2px;
+}
 .divider.green {
 	background-color: #9FB80A;
 }
+.divider.green_thin {
+	background-color: #9FB80A;
+        height: 2px;
+}
 .banner.main {
 	height: 150px;
-	background: url("/static/top-banner.jpg");
+	background: url("/static/sports-banner.jpg");
 	background-position: right;
 	background-repeat: no-repeat;
 	background-size: cover;
@@ -116,11 +124,11 @@ h3 {
 .banner h1 {
 	margin: 45px 0;
 }
- .restaurant-list {
+.restaurant-list {
  	background-color: #F0F0F0;
  	padding: 20px;
-u }
- .restaurant-list:hover {
+}
+.restaurant-list:hover {
  	background-color: #e1e17f;
  	padding: 20px;
 }
