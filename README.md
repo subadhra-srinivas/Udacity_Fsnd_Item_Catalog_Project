@@ -9,7 +9,7 @@ Modern web applications perform a variety of functions and provide amazing featu
 
 item_catalog_project.py: This file contains the server side program</br>
 
-categoriesitem.db: Database file which contains same sports related items. In order to create the database you have to run the database_setup.py. In order to populate the database run lotsofitem.py</br>
+categoriesitem.db: Database file which contains some sports related items. In order to create the database you have to run the database_setup.py. In order to populate the database run lotsofitem.py</br>
 
 client_secrets.json and fb_client_secrets.json: This file contains authorization information for Google+ and Facebook</br>
 
