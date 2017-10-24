@@ -11,7 +11,7 @@ item_catalog_project.py: This file contains the server side program</br>
 
 categoriesitem.db: Database file which contains same sports related items. In order to create the database you have to run the database_setup.py. In order to populate the database run lotsofitem.py</br>
 
-client_secrets.json and fb_client_secrets.json: This file contains authorizationinformation for Google+ and Facebook</br>
+client_secrets.json and fb_client_secrets.json: This file contains authorization information for Google+ and Facebook</br>
 
 **Requirements:**
 
@@ -30,7 +30,7 @@ Clone the fullstack-nanodegree-vm</br>
 Launch the Vagrant VM (vagrant up)</br>
 Write your Flask application locally in the vagrant/catalog directory (which will automatically be synced to /vagrant/catalog within the VM).</br>
 Run your application within the VM (python /vagrant/catalog/item_catalog_project.py)</br>
-Access and test your application by visiting http://localhost:8000 locally</br>
+Access and test your application by visiting http://localhost:5000 locally</br>
 
 **API Endpoints**:
 
