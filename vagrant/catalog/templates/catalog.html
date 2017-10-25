@@ -23,8 +23,45 @@
 
 </div>
 
-<a href='{{url_for('newItem')}}'>Add Item</a> 
-<!-- Main Code -->
+{% if is_logged_in %}
+       <a href='{{url_for('newItem')}}'>Add Item</a>
+  <!-- Main Code -->
+                <div class = "row">
+                    <div class="col-md-6">
+                        <h3> Category </h3>
+                    </div>
+                    <div class="col-md-6">
+                        <h3>Latest Items</h3>
+                    </div>
+                </div>
+                <div class = "row divider green_thin">
+                    <div class="col-md-12">
+                    </div>
+                </div>
+                <div class = "row">
+                    <div class="col-md-6">
+                         {% for categories in catalog %}
+                              {{categories.name}}</br></br>
+                         {% endfor %}
+                    </div>
+                    <div class="col-md-6">
+                          {% for item in items %}
+                              {% if session.user_id == item.user_id %}
+                                    {{item.title +'('+item.category+')'}}
+                                      <a href='{{url_for('editItem', id=item.id ) }}'>Edit</a> |
+                                      <a href='{{url_for('deleteItem', id=item.id ) }}'>Delete</a></br></br>
+ 
+                             {% else %}
+                                   {{item.title +'('+item.category+')'}}
+                                   <br><br>
+                             {% endif %}
+ 
+                         {% endfor %}
+                   </div>
+               </div>
+
+{% else %}
+ <!-- Main Code -->
               <div class = "row">
                   <div class="col-md-6">
                       <h3> Category </h3>
@@ -33,7 +70,7 @@
                       <h3>Latest Items</h3>
                   </div>
               </div>
-              <div class = "row divider green_thin">
+              <div class = "row divider blue_thin">
                   <div class="col-md-12">
                   </div>
               </div>
@@ -44,19 +81,12 @@
                        {% endfor %}
                   </div>
                   <div class="col-md-6">
-                        {% for item in items %}
-                            {% if session.user_id == item.user_id %}
-                                  {{item.title +'('+item.category+')'}}
-                                    <a href='{{url_for('editItem', id=item.id ) }}'>Edit</a> |
-                                    <a href='{{url_for('deleteItem', id=item.id ) }}'>Delete</a></br></br>
-
-                            {% else %}
-                                  {{item.title +'('+item.category+')'}}
-                                  <br><br>
-                            {% endif %}     
-
-                        {% endfor %}
+                       {% for item in items %}
+                            {{item.title +'('+item.category+')'}}</br></br>
+                       {% endfor %}
                   </div>
               </div>
+
+{% endif %}
 
 {% endblock %}
