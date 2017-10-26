@@ -1,5 +1,6 @@
 from flask import (Flask, render_template, request, redirect, jsonify, url_for,
-                   flash)
+                   flash, abort)
+from functools import wraps
 from sqlalchemy import create_engine, asc
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Categories, Item, User
@@ -276,6 +277,8 @@ def gdisconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
 
+is_logged_in = 1
+ 
 
 # JSON APIs to view Catalog Information
 @app.route('/catalog/<int:category_id>/items/JSON')
@@ -298,13 +301,15 @@ def CatalogJSON():
     catalog = session.query(Categories).all()
     return jsonify(Catalog=[i.serialize for i in catalog])
 
-is_logged_in = 1
-
-def one_or_none(database_query):
-     try:
-        if database_query:
-     except:
-        return None
+def category_exists(func):
+      @wraps(func) # this requires an import
+      def wrapper(category_id):
+             category = session.query(Categories).filter_by(id=category_id).one_or_none()
+             if not category:
+                      abort(404)
+             else:
+                      func(category_id)
+      return wrapper
 
 # Show current Categories along with the latest items added
 @app.route('/')
@@ -313,19 +318,18 @@ def showCatalog():
     catalog = session.query(Categories).order_by(asc(Categories.name))
     items = session.query(Item).order_by(desc(Item.id))
     if 'username' not in login_session:
-        is_logged_in = 0
-        return render_template('catalog.html', catalog=catalog,
-                               items=items, is_logged_in=is_logged_in)
+        return render_template('publiccatalog.html', catalog=catalog,
+                               items=items)
+    else:
+        return render_template('catalog.html', catalog=catalog, items=items)
 
 
 # Show the items for the particular category id
 @app.route('/catalog/<int:category_id>/items')
+@category_exists
 def showCatagoryItem(category_id):
-    category = session.query(Categories).filter_by(id=category_id).one()
-    type = one_or_none(category)
-    if type == None:
-        return redirect(url_for('showCatalog'))
-        
+
+    category = session.query(Categories).filter_by(id=category_id).one_or_none()
     catalog = session.query(Categories).order_by(asc(Categories.name))
     items = session.query(Item).filter_by(category_id=category_id)
     count_items = session.query(Item).filter_by(
@@ -395,13 +399,13 @@ def editItem(id):
                 "items.');}</script><body "
                 "onload='myFunction()''>")
     if request.method == 'POST':
-        if request.form['title']:
+        if request.form.get('title'):
             editedItem.title = request.form['title']
-        if request.form['description']:
+        if request.form.get('description'):
             editedItem.description = request.form['description']
-        if request.form['price']:
+        if request.form.get('price'):
             editedItem.price = request.form['price']
-        if request.form['category']:
+        if request.form.get('category'):
             editedItem.category = request.form['category']
             category1 = session.query(Categories).filter_by(
                                       name=editedItem.category).one()
