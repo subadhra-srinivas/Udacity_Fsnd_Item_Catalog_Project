@@ -303,12 +303,12 @@ def CatalogJSON():
 
 def category_exists(func):
       @wraps(func) # this requires an import
-      def wrapper():
+      def wrapper(category_id):
              category = session.query(Categories).filter_by(id=category_id).one_or_none()
              if not category:
                       abort(404)
              else:
-                      func()
+                      func(category_id)
       return wrapper
 
 # Show current Categories along with the latest items added
@@ -328,10 +328,8 @@ def showCatalog():
 @app.route('/catalog/<int:category_id>/items')
 @category_exists
 def showCatagoryItem(category_id):
-    #category = session.query(Categories).filter_by(id=category_id).one_or_none()
-    #if not category:
-    #   abort(404) 
 
+    category = session.query(Categories).filter_by(id=category_id).one_or_none()
     catalog = session.query(Categories).order_by(asc(Categories.name))
     items = session.query(Item).filter_by(category_id=category_id)
     count_items = session.query(Item).filter_by(
