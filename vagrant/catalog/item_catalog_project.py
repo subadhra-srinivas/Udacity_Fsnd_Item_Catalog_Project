@@ -301,15 +301,47 @@ def CatalogJSON():
     catalog = session.query(Categories).all()
     return jsonify(Catalog=[i.serialize for i in catalog])
 
+
+def login_required(func):
+    @wraps(func) # this requires an import
+    def wrapper():
+        if 'username' not in login_session:
+            return redirect('login')
+        else:
+            return func()
+    return wrapper
+
+
+def login_required_id(func):
+    @wraps(func) # this requires an import
+    def wrapper(id):
+        if 'username' not in login_session:
+            return redirect('login')
+        else:
+            return func(id)
+    return wrapper
+
 def category_exists(func):
       @wraps(func) # this requires an import
       def wrapper(category_id):
              category = session.query(Categories).filter_by(id=category_id).one_or_none()
              if not category:
-                      abort(404)
+                 return abort(404)
              else:
-                      func(category_id)
+                 return func(category_id)
       return wrapper
+
+def item_exists(func):
+      @wraps(func) # this requires an import
+      def wrapper(*args, **kwargs):
+             item = session.query(Item).filter_by(id=id, category_id=category_id).one_or_none()
+             if not item:
+                 return abort(404)
+             else:
+                 return func(*args, **kwargs)
+      return wrapper
+
+
 
 # Show current Categories along with the latest items added
 @app.route('/')
@@ -349,6 +381,7 @@ def showCatagoryItem(category_id):
 
 # Show the item for the particular category id and item id
 @app.route('/catalog/<int:category_id>/item/<int:id>')
+@item_exists
 def showItem(category_id, id):
     item = session.query(Item).filter_by(id=id, category_id=category_id).one()
     creator = getUserInfo(item.user_id)
@@ -362,9 +395,8 @@ def showItem(category_id, id):
 
 # Create a new item
 @app.route('/catalog/item/new/', methods=['GET', 'POST'])
+@login_required
 def newItem():
-    if 'username' not in login_session:
-        return redirect('/login')
     categories = session.query(Categories).all()
     if request.method == 'POST':
         category1 = session.query(Categories).filter_by(
@@ -385,9 +417,8 @@ def newItem():
 
 # Edit a item
 @app.route('/catalog/item/<int:id>/edit', methods=['GET', 'POST'])
+@login_required_id
 def editItem(id):
-    if 'username' not in login_session:
-        return redirect('/login')
     categories = session.query(Categories).all()
     editedItem = session.query(Item).filter_by(id=id).one()
     print login_session['user_id']
@@ -422,6 +453,7 @@ def editItem(id):
 
 # Delete a item
 @app.route('/catalog/item/<int:id>/delete', methods=['GET', 'POST'])
+@login_required_id
 def deleteItem(id):
     if 'username' not in login_session:
         return redirect('/login')
