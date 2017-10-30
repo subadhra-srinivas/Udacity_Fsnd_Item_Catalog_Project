@@ -1,6 +1,8 @@
 {% extends "main.html" %}
 {% block content %}
 {% include "header.html" %}
+
+{% if is_logged_in %}
         <div class="row top-menu">
                 <div class="col-md-10"></div>
                 <div class="col-md-2 text-right">
@@ -17,19 +19,19 @@
         </div>
 
 
-<div class = 'flash'>
-   {% with messages = get_flashed_messages() %}
-      {% if messages %}
+        <div class = 'flash'>
+            {% with messages = get_flashed_messages() %}
+               {% if messages %}
 
-        <ul>
-        {% for message in messages %}
-            <li> <strong> {{ message }} </strong> </li>
-        {% endfor %}
-        </ul>
-        {% endif %}
-    {% endwith %}
+                  <ul>
+                    {% for message in messages %}
+                        <li> <strong> {{ message }} </strong> </li>
+                    {% endfor %}
+                  </ul>
+               {% endif %}
+            {% endwith %}
 
-</div>
+        </div>
 
        <div class = "row">
             <div class="col-md-12">
@@ -42,6 +44,48 @@
        <div class = "row divider green_thin">
        </div>
 
+{% else %}
+
+       <div class="row top-menu">
+                <div class="col-md-10"></div>
+                <div class="col-md-2 text-right">
+                                        </div>
+        </div>
+        <div class="row divider blue">
+                <div class="col-md-12"></div>
+        </div>
+        <div class="row banner main">
+                <div class="col-md-1"></div>
+                <div class="col-md-11 padding-none">
+                        <h1>Catalog App</h1>
+                </div>
+        </div>
+
+
+        <div class = 'flash'>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+
+                  <ul>
+                    {% for message in messages %}
+                      <li> <strong> {{ message }} </strong> </li>
+                    {% endfor %}
+                  </ul>
+                {% endif %}
+             {% endwith %}
+
+       </div>
+
+       <div class = "row">
+            <div class="col-md-12">
+              <h3> {{ item.title }}</h3>
+                  <p>Description:{{item.description}}</p>
+             </div>
+       </div>
+       <div class = "row divider blue_thin">
+       </div>
+
+{% endif %}
 {% endblock %}
 
 
