@@ -277,7 +277,6 @@ def gdisconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
 
-is_logged_in = 1
  
 
 # JSON APIs to view Catalog Information
@@ -314,27 +313,52 @@ def login_required(func):
 
 def login_required_id(func):
     @wraps(func) # this requires an import
-    def wrapper(id):
+    def wrapper(*args, **kwargs):
+        print kwargs
+        id = kwargs['id']
         if 'username' not in login_session:
             return redirect('login')
         else:
-            return func(id)
+            return func(*args, **kwargs) 
     return wrapper
 
 def category_exists(func):
       @wraps(func) # this requires an import
-      def wrapper(category_id):
+      def wrapper(*args, **kwargs):
+             print kwargs
+             category_id = kwargs['category_id']
              category = session.query(Categories).filter_by(id=category_id).one_or_none()
              if not category:
                  return abort(404)
              else:
-                 return func(category_id)
+                 return func(*args, **kwargs)
       return wrapper
+
+
+def item_category_exists(func):
+      @wraps(func) # this requires an import
+      def wrapper(*args, **kwargs):
+             print kwargs
+             category_id = kwargs['category_id']
+             id = kwargs['id']
+
+             item = session.query(Item).filter_by(id=id, category_id=category_id).one_or_none()
+             
+             if not item:
+                 return abort(404)
+             else:
+                 return func(*args, **kwargs)
+      return wrapper
+
 
 def item_exists(func):
       @wraps(func) # this requires an import
       def wrapper(*args, **kwargs):
-             item = session.query(Item).filter_by(id=id, category_id=category_id).one_or_none()
+             print kwargs
+             id = kwargs['id']
+
+             item = session.query(Item).filter_by(id=id).one_or_none()
+
              if not item:
                  return abort(404)
              else:
@@ -343,6 +367,39 @@ def item_exists(func):
 
 
 
+def edit_authentication(func):
+      @wraps(func) # this requires an import
+      def wrapper(*args, **kwargs):
+             print kwargs
+             id = kwargs['id']
+             editedItem = session.query(Item).filter_by(id=id).one()
+             if login_session['user_id'] != editedItem.user_id:
+                 return ("<script>function myFunction() {alert('You are not "
+                         "authorized to edit items to this catalog. Please "
+                         "create your own category in order to edit"
+                         "items.');}</script><body "
+                         "onload='myFunction()''>")
+             else:
+                 return func(*args, **kwargs)
+      return wrapper
+
+
+def delete_authentication(func):
+      @wraps(func) # this requires an import
+      def wrapper(*args, **kwargs):
+             print kwargs
+             id = kwargs['id']
+             itemToDelete = session.query(Item).filter_by(id=id).one()
+             if login_session['user_id'] != itemToDelete.user_id:
+                 return ("<script>function myFunction() {alert('You are not "
+                         "authorized to delete items to this catalog. Please "
+                         "create your own category in order to delete"
+                         "items.');}</script><body "
+                         "onload='myFunction()''>")
+             else:
+                 return func(*args, **kwargs)
+      return wrapper
+
 # Show current Categories along with the latest items added
 @app.route('/')
 @app.route('/catalog/')
@@ -350,10 +407,12 @@ def showCatalog():
     catalog = session.query(Categories).order_by(asc(Categories.name))
     items = session.query(Item).order_by(desc(Item.id))
     if 'username' not in login_session:
-        return render_template('publiccatalog.html', catalog=catalog,
-                               items=items)
+        is_logged_in = 0
     else:
-        return render_template('catalog.html', catalog=catalog, items=items)
+        is_logged_in = 1
+   
+    return render_template('catalog.html', catalog=catalog,
+                            items=items, is_logged_in=is_logged_in)
 
 
 # Show the items for the particular category id
@@ -367,30 +426,32 @@ def showCatagoryItem(category_id):
     count_items = session.query(Item).filter_by(
                                          category_id=category_id).count()
     if 'username' not in login_session:
-        return render_template('publicshowCategoryItem.html',
-                               catalog=catalog, items=items,
-                               category_name=category.name,
-                               count_items=count_items)
+        is_logged_in = 0
     else:
-        return render_template('showCategoryItem.html',
-                               catalog=catalog,
-                               items=items,
-                               category_name=category.name,
-                               count_items=count_items)
+        is_logged_in = 1
+
+    return render_template('showCategoryItem.html',
+                            catalog=catalog, items=items,
+                            category_name=category.name,
+                            count_items=count_items,
+                            is_logged_in=is_logged_in)
 
 
 # Show the item for the particular category id and item id
 @app.route('/catalog/<int:category_id>/item/<int:id>')
-@item_exists
+@item_category_exists
 def showItem(category_id, id):
     item = session.query(Item).filter_by(id=id, category_id=category_id).one()
     creator = getUserInfo(item.user_id)
     if ('username' not in login_session or
             creator.id != login_session['user_id']):
 
-        return render_template('publicitem.html', item=item, creator=creator)
+        is_logged_in = 0
     else:
-        return render_template('item.html', item=item, creator=creator)
+        is_logged_in = 1
+
+    return render_template('item.html', item=item, creator=creator,
+                                        is_logged_in=is_logged_in)
 
 
 # Create a new item
@@ -400,7 +461,11 @@ def newItem():
     categories = session.query(Categories).all()
     if request.method == 'POST':
         category1 = session.query(Categories).filter_by(
-                                 name=request.form['category']).one()
+                                 name=request.form['category']).one_or_none()
+        
+        if not category1:
+            abort(404)
+
         newItem = Item(title=request.form['title'],
                        description=request.form['description'],
                        price=request.form['price'],
@@ -418,17 +483,13 @@ def newItem():
 # Edit a item
 @app.route('/catalog/item/<int:id>/edit', methods=['GET', 'POST'])
 @login_required_id
+@item_exists
+@edit_authentication
 def editItem(id):
     categories = session.query(Categories).all()
-    editedItem = session.query(Item).filter_by(id=id).one()
+    editedItem = session.query(Item).filter_by(id=id).one_or_none()
     print login_session['user_id']
     print editedItem.user_id
-    if login_session['user_id'] != editedItem.user_id:
-        return ("<script>function myFunction() {alert('You are not "
-                "authorized to edit items to this catalog. Please "
-                "create your own category in order to edit"
-                "items.');}</script><body "
-                "onload='myFunction()''>")
     if request.method == 'POST':
         if request.form.get('title'):
             editedItem.title = request.form['title']
@@ -439,7 +500,10 @@ def editItem(id):
         if request.form.get('category'):
             editedItem.category = request.form['category']
             category1 = session.query(Categories).filter_by(
-                                      name=editedItem.category).one()
+                                      name=editedItem.category).one_or_none()
+            if not category1:
+                abort(404)
+
             editedItem.category_id = category1.id
 
         session.add(editedItem)
@@ -454,16 +518,10 @@ def editItem(id):
 # Delete a item
 @app.route('/catalog/item/<int:id>/delete', methods=['GET', 'POST'])
 @login_required_id
+@item_exists
+@delete_authentication
 def deleteItem(id):
-    if 'username' not in login_session:
-        return redirect('/login')
-    itemToDelete = session.query(Item).filter_by(id=id).one()
-    if login_session['user_id'] != itemToDelete.user_id:
-        return ("<script>function myFunction() {alert('You are not"
-                "authorized to delete items to this catalog. Please"
-                "create your own catalog in order to delete "
-                "items.');}</script><body "
-                "onload='myFunction()'' >")
+    itemToDelete = session.query(Item).filter_by(id=id).one_or_none()
     if request.method == 'POST':
         session.delete(itemToDelete)
         session.commit()
