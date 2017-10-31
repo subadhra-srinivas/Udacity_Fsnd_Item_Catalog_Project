@@ -303,24 +303,14 @@ def CatalogJSON():
 
 def login_required(func):
     @wraps(func) # this requires an import
-    def wrapper():
-        if 'username' not in login_session:
-            return redirect('login')
-        else:
-            return func()
-    return wrapper
-
-
-def login_required_id(func):
-    @wraps(func) # this requires an import
     def wrapper(*args, **kwargs):
         print kwargs
-        id = kwargs['id']
         if 'username' not in login_session:
             return redirect('login')
         else:
-            return func(*args, **kwargs) 
+            return func(*args, **kwargs)
     return wrapper
+
 
 def category_exists(func):
       @wraps(func) # this requires an import
@@ -367,16 +357,14 @@ def item_exists(func):
 
 
 
-def edit_authentication(func):
+def authentication_required(func):
       @wraps(func) # this requires an import
       def wrapper(*args, **kwargs):
-             print kwargs
-             id = kwargs['id']
-             editedItem = session.query(Item).filter_by(id=id).one()
-             if login_session['user_id'] != editedItem.user_id:
+             item = session.query(Item).filter_by(id=kwargs['id']).one()
+             if login_session['user_id'] != item.user_id:
                  return ("<script>function myFunction() {alert('You are not "
-                         "authorized to edit items to this catalog. Please "
-                         "create your own category in order to edit"
+                         "authorized to make changes to this item. Please "
+                         "create your own category in order to edit/delete "
                          "items.');}</script><body "
                          "onload='myFunction()''>")
              else:
@@ -384,21 +372,6 @@ def edit_authentication(func):
       return wrapper
 
 
-def delete_authentication(func):
-      @wraps(func) # this requires an import
-      def wrapper(*args, **kwargs):
-             print kwargs
-             id = kwargs['id']
-             itemToDelete = session.query(Item).filter_by(id=id).one()
-             if login_session['user_id'] != itemToDelete.user_id:
-                 return ("<script>function myFunction() {alert('You are not "
-                         "authorized to delete items to this catalog. Please "
-                         "create your own category in order to delete"
-                         "items.');}</script><body "
-                         "onload='myFunction()''>")
-             else:
-                 return func(*args, **kwargs)
-      return wrapper
 
 # Show current Categories along with the latest items added
 @app.route('/')
@@ -482,9 +455,9 @@ def newItem():
 
 # Edit a item
 @app.route('/catalog/item/<int:id>/edit', methods=['GET', 'POST'])
-@login_required_id
+@login_required
 @item_exists
-@edit_authentication
+@authentication_required
 def editItem(id):
     categories = session.query(Categories).all()
     editedItem = session.query(Item).filter_by(id=id).one_or_none()
@@ -517,9 +490,9 @@ def editItem(id):
 
 # Delete a item
 @app.route('/catalog/item/<int:id>/delete', methods=['GET', 'POST'])
-@login_required_id
+@login_required
 @item_exists
-@delete_authentication
+@authentication_required
 def deleteItem(id):
     itemToDelete = session.query(Item).filter_by(id=id).one_or_none()
     if request.method == 'POST':
