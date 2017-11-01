@@ -30,12 +30,8 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
-# Put the log messages in the log_filename.txt
-#logging.basicConfig(filename='log_filename.txt', level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-#logging.debug('This is a log message.')
-
-logger = logging.getLogger()
-logger.disabled = False 
+# Put the log messages in the item_catalog.log 
+logging.basicConfig(filename='item_catalog.log',level=logging.DEBUG)
 
 # Create anti-forgery state token
 @app.route('/login')
@@ -54,7 +50,7 @@ def fbconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
     access_token = request.data
-    logger.debug("access token received %s " % access_token)
+    logging.debug("access token received %s " % access_token)
 
     app_id = json.loads(
         open('fb_client_secrets.json', 'r').read())['web']['app_id']
@@ -65,7 +61,7 @@ def fbconnect():
            '=%s' % (app_id, app_secret, access_token))
     h = httplib2.Http()
     result = h.request(url, 'GET')[1]
-    logger.debug(repr(result))
+    logging.debug(repr(result))
 
     # Use token to get user info from API
     userinfo_url = "https://graph.facebook.com/v2.8/me"
@@ -79,7 +75,7 @@ def fbconnect():
     '''
     token = result.split(',')[0].split(':')[1].replace('"', '')
     token1 = result.split(',')[0].split(':')[1].replace('"', '')
-    logger.debug(repr(token1))
+    logging.debug(repr(token1))
     url = ('https://graph.facebook.com/v2.8/me?access_token=%s&fields='
            'name,id,email' % token)
     h = httplib2.Http()
@@ -311,7 +307,7 @@ def CatalogJSON():
 def login_required(func):
     @wraps(func) # this requires an import
     def wrapper(*args, **kwargs):
-        print kwargs
+        logging.debug(kwargs)
         if 'username' not in login_session:
             return redirect('login')
         else:
@@ -322,7 +318,7 @@ def login_required(func):
 def category_exists(func):
       @wraps(func) # this requires an import
       def wrapper(*args, **kwargs):
-             print kwargs
+             logging.debug(kwargs)
              category_id = kwargs['category_id']
              category = session.query(Categories).filter_by(id=category_id).one_or_none()
              if not category:
@@ -335,7 +331,7 @@ def category_exists(func):
 def item_category_exists(func):
       @wraps(func) # this requires an import
       def wrapper(*args, **kwargs):
-             print kwargs
+             logging.debug(kwargs)
              category_id = kwargs['category_id']
              id = kwargs['id']
 
@@ -351,7 +347,7 @@ def item_category_exists(func):
 def item_exists(func):
       @wraps(func) # this requires an import
       def wrapper(*args, **kwargs):
-             print kwargs
+             logging.debug(kwargs)
              id = kwargs['id']
 
              item = session.query(Item).filter_by(id=id).one_or_none()
@@ -468,8 +464,8 @@ def newItem():
 def editItem(id):
     categories = session.query(Categories).all()
     editedItem = session.query(Item).filter_by(id=id).one_or_none()
-    print login_session['user_id']
-    print editedItem.user_id
+    logging.debug(login_session['user_id'])
+    logging.debug(editedItem.user_id)
     if request.method == 'POST':
         if request.form.get('title'):
             editedItem.title = request.form['title']
@@ -514,9 +510,9 @@ def deleteItem(id):
 # Disconnect the login
 @app.route('/disconnect')
 def disconnect():
-    print "Inside disconnect"
+    logging.debug("Inside disconnect")
     if 'provider' in login_session:
-        print login_session['provider']
+        logging.debug(login_session['provider'])
         if login_session['provider'] == 'google':
             gdisconnect()
         if login_session['provider'] == 'facebook':
