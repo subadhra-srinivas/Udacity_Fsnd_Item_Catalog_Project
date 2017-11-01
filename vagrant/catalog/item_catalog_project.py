@@ -14,6 +14,7 @@ import json
 from flask import make_response
 import requests
 from sqlalchemy import desc
+import logging
 
 app = Flask(__name__)
 
@@ -29,6 +30,12 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
+# Put the log messages in the log_filename.txt
+#logging.basicConfig(filename='log_filename.txt', level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+#logging.debug('This is a log message.')
+
+logger = logging.getLogger()
+logger.disabled = False 
 
 # Create anti-forgery state token
 @app.route('/login')
@@ -47,7 +54,7 @@ def fbconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
     access_token = request.data
-    print "access token received %s " % access_token
+    logger.debug("access token received %s " % access_token)
 
     app_id = json.loads(
         open('fb_client_secrets.json', 'r').read())['web']['app_id']
@@ -58,7 +65,7 @@ def fbconnect():
            '=%s' % (app_id, app_secret, access_token))
     h = httplib2.Http()
     result = h.request(url, 'GET')[1]
-    print repr(result)
+    logger.debug(repr(result))
 
     # Use token to get user info from API
     userinfo_url = "https://graph.facebook.com/v2.8/me"
@@ -72,7 +79,7 @@ def fbconnect():
     '''
     token = result.split(',')[0].split(':')[1].replace('"', '')
     token1 = result.split(',')[0].split(':')[1].replace('"', '')
-    print repr(token1)
+    logger.debug(repr(token1))
     url = ('https://graph.facebook.com/v2.8/me?access_token=%s&fields='
            'name,id,email' % token)
     h = httplib2.Http()
@@ -94,7 +101,7 @@ def fbconnect():
     h = httplib2.Http()
     result = h.request(url, 'GET')[1]
     data = json.loads(result)
-    print repr(data)
+    logging.debug(repr(data))
     login_session['picture'] = data["data"]["url"]
 
     # see if user exists
