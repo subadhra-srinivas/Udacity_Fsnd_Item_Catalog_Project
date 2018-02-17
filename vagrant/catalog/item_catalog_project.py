@@ -504,7 +504,7 @@ def deleteItem(id):
         flash('Item Successfully Deleted')
         return redirect(url_for('showCatalog'))
     else:
-        return render_template('deleteItem.html', item=itemToDelete)
+        return render_template('deleteitem.html', item=itemToDelete)
 
 
 # Disconnect the login
