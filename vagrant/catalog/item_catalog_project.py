@@ -42,7 +42,7 @@ def showLogin():
     # return "The current session state is %s" % login_session['state']
     return render_template('login.html', STATE=state)
 
-
+# Function connecting to facebook page
 @app.route('/fbconnect', methods=['POST'])
 def fbconnect():
     if request.args.get('state') != login_session['state']:
@@ -119,7 +119,7 @@ def fbconnect():
     flash("Now logged in as %s" % login_session['username'])
     return output
 
-
+# Function disconnecting from facebook page
 @app.route('/fbdisconnect')
 def fbdisconnect():
     facebook_id = login_session['facebook_id']
