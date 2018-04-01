@@ -304,7 +304,7 @@ def CatalogJSON():
     catalog = session.query(Categories).all()
     return jsonify(Catalog=[i.serialize for i in catalog])
 
-
+# Decorator for login_required
 def login_required(func):
     @wraps(func) # this requires an import
     def wrapper(*args, **kwargs):
@@ -315,7 +315,7 @@ def login_required(func):
             return func(*args, **kwargs)
     return wrapper
 
-
+# Decorator for category_exists 
 def category_exists(func):
       @wraps(func) # this requires an import
       def wrapper(*args, **kwargs):
@@ -328,7 +328,7 @@ def category_exists(func):
                  return func(*args, **kwargs)
       return wrapper
 
-
+# Decorator for item_category_exists 
 def item_category_exists(func):
       @wraps(func) # this requires an import
       def wrapper(*args, **kwargs):
@@ -344,7 +344,7 @@ def item_category_exists(func):
                  return func(*args, **kwargs)
       return wrapper
 
-
+# Decorator for item_exits 
 def item_exists(func):
       @wraps(func) # this requires an import
       def wrapper(*args, **kwargs):
@@ -360,7 +360,7 @@ def item_exists(func):
       return wrapper
 
 
-
+# Decorator for authetication_required 
 def authentication_required(func):
       @wraps(func) # this requires an import
       def wrapper(*args, **kwargs):
