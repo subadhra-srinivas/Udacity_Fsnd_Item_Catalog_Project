@@ -52,7 +52,7 @@ def fbconnect():
         return response
     access_token = request.data
     logging.debug("access token received %s " % access_token)
-
+    # Exchange client token for long-lived server-side taken with GET
     app_id = json.loads(
         open('fb_client_secrets.json', 'r').read())['web']['app_id']
     app_secret = json.loads(
