@@ -45,6 +45,7 @@ def showLogin():
 # Function connecting to facebook page
 @app.route('/fbconnect', methods=['POST'])
 def fbconnect():
+    # Validate state token
     if request.args.get('state') != login_session['state']:
         response = make_response(json.dumps('Invalid state parameter.'), 401)
         response.headers['Content-Type'] = 'application/json'
