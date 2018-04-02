@@ -132,7 +132,7 @@ def fbdisconnect():
     result = h.request(url, 'DELETE')[1]
     return "you have been logged out"
 
-
+# Function connecting to google login
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
     # Validate state token
@@ -253,7 +253,7 @@ def getUserID(email):
 
 # DISCONNECT - Revoke a current user's token and reset their login_session
 
-
+# Function disconnect from google login
 @app.route('/gdisconnect')
 def gdisconnect():
         # Only disconnect a connected user.
