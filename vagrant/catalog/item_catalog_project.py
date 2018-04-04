@@ -50,6 +50,7 @@ def fbconnect():
         response = make_response(json.dumps('Invalid state parameter.'), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
+    # Get the access token
     access_token = request.data
     logging.debug("access token received %s " % access_token)
     # Exchange client token for long-lived server-side taken with GET
