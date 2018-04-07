@@ -102,7 +102,7 @@ def fbconnect():
     logging.debug(repr(data))
     login_session['picture'] = data["data"]["url"]
 
-    # see if user exists
+    # See if user exists
     user_id = getUserID(login_session['email'])
     if not user_id:
         user_id = createUser(login_session)
