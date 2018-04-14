@@ -38,7 +38,7 @@ Access and test your application by visiting http://localhost:5000 locally</br>
 
 ## Description of obstacles and solution:
 
-I had problems implementing OAuth for login. Read the OAuth documentation. Got help from Udacity mentor for the additional materials.
+I had problems implementing OAuth for login. Read the OAuth documentation. Got help from Udacity mentor for the additional materials regarding OAuth.
 
 ## API Endpoints:
 
