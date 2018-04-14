@@ -36,6 +36,10 @@ Access and test your application by visiting http://localhost:5000 locally</br>
 
 ![ScreenShot](https://github.com/subadhra-srinivas/Udacity_Fsnd_Item_Catalog_Project/blob/master/vagrant/catalog/item_catalog-600_medium.png)
 
+## Description of obstacles and solution:
+
+I had problems implementing OAuth for login. Read the OAuth documentation. Got help from Udacity mentor for the additional materials.
+
 ## API Endpoints:
 
 1. /catalog/JSON - view the list of catalog categories in JSON</br>
