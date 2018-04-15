@@ -47,3 +47,9 @@ I had problems implementing OAuth for login. Read the OAuth documentation. Got h
    category_id and item id in JSON</br>
 3. /catalog/category_id/items -view the list of items for the particular
    category_id in JSON</br>
+
+## License:
+
+This project is licensed under the terms of the MIT license.
+
+
